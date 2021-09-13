@@ -1,4 +1,94 @@
-const loadProducts = () => {
+const loadData = () => {
+  fetch('https://fakestoreapi.com/products')
+    .then(res => res.json())
+    .then(data => displayData(data));
+}
+
+loadData();
+
+const displayData = (product) => {
+  // console.log(product);
+  product.forEach(element => {
+    const div = document.createElement("div");
+    div.classList.add("product");
+    div.innerHTML = `<div class="single-product">
+      <div>
+    <img class="product-image" src=${element.image}></img>
+      </div>
+      <h5>${element.title}</h5>
+      <p>Category: ${element.category}</p>
+      <p>Rating: ${element.rating.rate}</p>
+      <p>Total Rate Count: ${element.rating.count}</p>
+      <h3>Price: $ ${element.price}</h3>
+      <button onclick="addToCart(${element.id},${element.price})" id="addToCart-btn" class="buy-now btn btn-success">add to cart</button>
+      <button id="details-btn" class="btn btn-danger">Details</button></div>
+      `;
+    document.getElementById("all-products").appendChild(div);
+  });
+}
+
+let count = 0;
+const addToCart = (id, price) => {
+  count = count + 1;
+  document.getElementById('total-Products').innerText = count;
+  updatePrice(price);
+}
+
+const updatePrice = (price) => {
+  const priceText = document.getElementById('price');
+  const priceNum = parseFloat(priceText.innerText);
+  const sum = priceNum + price;
+  priceText.innerText = sum.toFixed(2);
+  updateTaxAndCharge()
+  updateTotal();
+}
+
+const getInputValue = (id) => {
+  const element = document.getElementById(id).innerText;
+  const converted = parseInt(element);
+  return converted;
+};
+
+// set innerText function
+const setInnerText = (id, value) => {
+  document.getElementById(id).innerText = Math.round(value);
+};
+
+// update delivery charge and total Tax
+const updateTaxAndCharge = () => {
+  const priceConverted = getInputValue("price");
+  if (priceConverted > 200) {
+    setInnerText("delivery-charge", 30);
+    setInnerText("total-tax", priceConverted * 0.2);
+  }
+  if (priceConverted > 400) {
+    setInnerText("delivery-charge", 50);
+    setInnerText("total-tax", priceConverted * 0.3);
+  }
+  if (priceConverted > 500) {
+    setInnerText("delivery-charge", 60);
+    setInnerText("total-tax", priceConverted * 0.4);
+  }
+};
+
+//grandTotal update function
+const updateTotal = () => {
+  const priceText = document.getElementById('price');
+  const price = parseFloat(priceText.innerText);
+  const deliveryChargeText = document.getElementById('delivery-charge');
+  const deliveryCharge = parseFloat(deliveryChargeText.innerText);
+  const taxText = document.getElementById('total-tax');
+  const tax = parseFloat(taxText.innerText);
+  const grandTotal = price + deliveryCharge + tax;
+  document.getElementById('total').innerText = grandTotal.toFixed(2);
+};
+
+
+
+
+
+
+/* const loadProducts = () => {
   const url = `https://fakestoreapi.com/products`;
   fetch(url)
     .then((response) => response.json())
@@ -6,7 +96,7 @@ const loadProducts = () => {
 };
 loadProducts();
 
-// show all product in UI 
+// show all product in UI
 const showProducts = (products) => {
   console.log(products);
   const allProducts = products.map((pd) => pd);
@@ -86,3 +176,4 @@ const updateTotal = () => {
 };
 
 showProducts();
+*/
